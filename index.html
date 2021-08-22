@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8" >
     <!-- BOOTSTRAP 0432 -->
     <link
       rel="stylesheet"
       href="node_modules/bootstrap/dist/css/bootstrap.min.css"
-    />
+    >
   </head>
 
   <!-- TITLE 0430-->
@@ -14,16 +14,64 @@
 
   <!-- MEMO PAD 021959 -->
   <body>
-    <textarea
-      style="height: 500px; width: 100%; display: block; padding: 10px"
-    ></textarea>
+    <div id="app">
+      <!-- 入力した値にVueからアクセスできるよう、次のデータ変数をバインディング 
+      inputText　・・・　入力されたテキスト 022009
+-->
+      <textarea
+        v-model="inputText"
+        style="height: 500px; width: 100%; display: block; padding: 10px"
+      ></textarea>
 
-    <div style="position: fixed; bottom: 0; width: 100%; padding: 10px">
-      <button class="btn btn-secondary float-right">保存する</button>
-      <div style="opacity: 0.7"></div>
+      <div style="position: fixed; bottom: 0; width: 100%; padding: 10px">
+        <!--  「保存する」ボタンをクリックした時のイベントを作る。
+まず、ボタンにイベントを追加してsaveText()を実行できるようにする。022011-->
+        <button class="btn btn-secondary" @click="saveText()">保存する</button>
+        <!-- 入力した値にVueからアクセスできるよう、次のデータ変数をバインディング 
+        resultMessage　・・・　保存した時の結果メッセージ 022009
+      -->
+        <div v-text="resultMessage" style="opacity: 0.7"></div>
+      </div>
     </div>
-
     <!-- VUEjs 0432 -->
     <script src="node_modules/vue/dist/vue.min.js"></script>
+
+    <!-- Save the text file 022005 -->
+    <script>
+      // 続いてsaveText()本体、この中でファイル操作とダイアログのモジュールを使うので、先に読み込んでおく。 022015
+      const fs = require("fs");
+      const dialog = require("electron").remote.dialog;
+
+      new Vue({
+        el: "#app",
+        // 入力した値にVueからアクセスできるよう、次のデータ変数をバインディングします。
+        // inputText　・・・　入力されたテキスト
+        // resultMessage　・・・　保存した時の結果メッセージ 022010
+        data: {
+          inputText: "",
+          resultMessage: "",
+        },
+        methods: {
+          // 保存メソッド 022016
+          saveText() {
+            // まず、showSaveDialog()で保存ダイアログを開く。　022017
+            dialog.showSaveDialog(null, (path) => {
+              if (path != undefined) {
+                try {
+                  // そして、もしファイル名を入力して保存が実行されると、ファイルを保存する以下のコードが実行される。　022018
+                  fs.writeFileSync(path, this.inputText);
+                  this.resultMessage = "保存が完了しました♪";
+
+                  // なお、フォルダに書き込み権限がない等の場合はエラーになりますので、catchの中が実行される。　022019
+                } catch (e) {
+                  this.resultMessage =
+                    "予期せぬエラーによりファイル保存に失敗しました・・・";
+                }
+              }
+            });
+          },
+        },
+      });
+    </script>
   </body>
 </html>
