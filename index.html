@@ -39,17 +39,17 @@
     <!-- Save the text file 022005 -->
     <script>
       // 続いてsaveText()本体、この中でファイル操作とダイアログのモジュールを使うので、先に読み込んでおく。 022015
-      const fs = require("fs");
-      const dialog = require("electron").remote.dialog;
+      const fs = require('fs');
+      const dialog = require('electron').remote.dialog;
 
       new Vue({
-        el: "#app",
+        el: '#app',
         // 入力した値にVueからアクセスできるよう、次のデータ変数をバインディングします。
         // inputText　・・・　入力されたテキスト
         // resultMessage　・・・　保存した時の結果メッセージ 022010
         data: {
-          inputText: "",
-          resultMessage: "",
+          inputText: '',
+          resultMessage: '',
         },
         methods: {
           // 保存メソッド 022016
@@ -60,12 +60,12 @@
                 try {
                   // そして、もしファイル名を入力して保存が実行されると、ファイルを保存する以下のコードが実行される。　022018
                   fs.writeFileSync(path, this.inputText);
-                  this.resultMessage = "保存が完了しました♪";
+                  this.resultMessage = '保存が完了しました♪';
 
-                  // なお、フォルダに書き込み権限がない等の場合はエラーになりますので、catchの中が実行される。　022019
+                  // なお、フォルダに書き込み権限がない等の場合はエラーになり、catchの中が実行される。　022019
                 } catch (e) {
                   this.resultMessage =
-                    "予期せぬエラーによりファイル保存に失敗しました・・・";
+                    '予期せぬエラーによりファイル保存に失敗しました・・・';
                 }
               }
             });
